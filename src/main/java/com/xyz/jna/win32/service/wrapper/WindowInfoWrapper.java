@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WindowInfoWrapper implements WinUser.WNDENUMPROC {
-    int count = 0;
     private List<String> windowInfo = new ArrayList<>();
 
     public boolean callback(WinDef.HWND hWnd, Pointer arg1) {
@@ -19,11 +18,12 @@ public class WindowInfoWrapper implements WinUser.WNDENUMPROC {
         user32.GetWindowTextA(hWnd, windowText, windowText.length);
         String wText = Native.toString(windowText);
 
-        if (wText.isEmpty()) {
-            return true;
-        }
+        int count = 1;
 
-        windowInfo.add("Window, hwnd:" + hWnd + ", # " + ++count + " Title: " + wText);
+        if (!wText.isEmpty()) {
+            count += windowInfo.size();
+            windowInfo.add("Window, hwnd:" + hWnd + ", # " + count + " Title: " + wText);
+        }
 
         return true;
     }
@@ -33,7 +33,6 @@ public class WindowInfoWrapper implements WinUser.WNDENUMPROC {
     }
 
     public void resetInfo(){
-        count = 0;
         windowInfo = new ArrayList<>();
     }
 }
